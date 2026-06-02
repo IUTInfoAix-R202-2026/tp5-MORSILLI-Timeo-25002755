@@ -78,6 +78,18 @@ public class SiteDao {
     // - lier les 5 paramètres dans l'ordre des colonnes (setString) ;
     // - exécuter avec executeUpdate() ;
     // - envelopper toute SQLException dans une DataAccessException.
+      try {
+        Connection connection = source.getConnection();
+        PreparedStatement pt = connection.prepareStatement(sql);
+        pt.setString(1, site.numeroCarre());
+        pt.setString(2, site.nomConvivial());
+        pt.setString(3, site.protocole());
+        pt.setString(4, site.commentaire());
+        pt.setString(5, site.dateCreation());
+        pt.executeUpdate();
+      } catch (SQLException e) {
+          throw new DataAccessException("Zzzz", e);
+      }
   }
 
   /** Met à jour les champs d'un site existant (identifié par son numéro de carré). */
@@ -88,6 +100,18 @@ public class SiteDao {
 
     // TODO exercice 4 : mettre à jour le site (mêmes étapes, executeUpdate).
     // Attention à l'ordre des paramètres : le numero_carre est le DERNIER (clause WHERE).
+    try {
+      Connection connection = source.getConnection();
+      PreparedStatement pt = connection.prepareStatement(sql);
+      pt.setString(5, site.numeroCarre());
+      pt.setString(1, site.nomConvivial());
+      pt.setString(2, site.protocole());
+      pt.setString(3, site.commentaire());
+      pt.setString(4, site.dateCreation());
+      pt.executeUpdate();
+    } catch (SQLException e) {
+      throw new DataAccessException("Zzzz", e);
+    }
   }
 
   /** Supprime le site identifié par son numéro de carré. */
@@ -95,6 +119,14 @@ public class SiteDao {
     String sql = "DELETE FROM site WHERE numero_carre = ?";
 
     // TODO exercice 4 : supprimer le site (PreparedStatement + executeUpdate).
+    try {
+      Connection connection = source.getConnection();
+      PreparedStatement pt = connection.prepareStatement(sql);
+      pt.setString(1, numeroCarre);
+      pt.executeUpdate();
+    } catch (SQLException e) {
+      throw new DataAccessException("Zzzz", e);
+    }
   }
 
   private static Site depuis(ResultSet rs) throws SQLException {
