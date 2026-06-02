@@ -1,6 +1,9 @@
 package fr.univ_amu.iut.exercice2;
 
 import fr.univ_amu.iut.jdbc.DataAccessException;
+import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteDataSource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -33,8 +36,6 @@ public class BaseDeDonnees {
    * @param chemin chemin du fichier SQLite (ex : {@code "chauves_souris.db"})
    */
   public static DataSource surFichier(String chemin) {
-    DataSource source = null;
-
     // TODO exercice 2 : créer et configurer la DataSource SQLite, et l'affecter à `source`.
     //
     // 1. SQLiteConfig config = new SQLiteConfig();
@@ -42,8 +43,12 @@ public class BaseDeDonnees {
     // 2. SQLiteDataSource sqlite = new SQLiteDataSource(config);
     //    sqlite.setUrl("jdbc:sqlite:" + chemin);
     // 3. source = sqlite;
+    SQLiteConfig config = new SQLiteConfig();
+    config.enforceForeignKeys(true);
+    SQLiteDataSource sqLite = new SQLiteDataSource(config);
+    sqLite.setUrl("jdbc:sqlite:" + chemin);
 
-    return source;
+    return sqLite;
   }
 
   /** Crée les tables (schema.sql) puis insère les données du fil rouge (seed.sql). Fourni. */
