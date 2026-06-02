@@ -30,19 +30,16 @@ class SitesViewModelTest {
     vm = new SitesViewModel(new SiteDao(source));
   }
 
-  @Disabled("Retire cette annotation pour activer le test")
   @Test
   void au_demarrage_les_sites_sont_charges_depuis_la_base() {
     assertThat(vm.sitesProperty()).extracting(Site::numeroCarre).containsExactly("640380");
   }
 
-  @Disabled("Retire cette annotation pour activer le test")
   @Test
   void le_resume_reflete_le_nombre_de_sites() {
     assertThat(vm.resumeProperty().get()).isEqualTo("1 site(s) suivi(s)");
   }
 
-  @Disabled("Retire cette annotation pour activer le test")
   @Test
   void ajouter_persiste_le_site_et_l_ajoute_a_la_liste() {
     Site nouveau = new Site("752204", "ZAC Nord", "PointFixeRecherche", null, "2026-05-01");
@@ -54,7 +51,6 @@ class SitesViewModelTest {
     assertThat(new SiteDao(source).getByNumeroCarre("752204")).isPresent();
   }
 
-  @Disabled("Retire cette annotation pour activer le test")
   @Test
   void supprimer_retire_le_site_de_la_liste_et_de_la_base() {
     // On supprime un site sans données rattachées (le site seedé 640380 a un point d'écoute,

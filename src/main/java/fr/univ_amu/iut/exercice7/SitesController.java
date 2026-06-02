@@ -5,6 +5,8 @@ import fr.univ_amu.iut.exercice4.Site;
 import fr.univ_amu.iut.jdbc.DataAccessException;
 import java.time.LocalDate;
 import java.util.Optional;
+
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -39,6 +41,7 @@ public class SitesController {
 
   @FXML
   private void initialize() {
+
     // TODO exercice 7 : câbler la vue sur le ViewModel.
     //
     // 1. Pour chaque colonne, définir une cell value factory qui lit le champ du Site
@@ -49,6 +52,28 @@ public class SitesController {
     //    "PointFixeRecherche").
     // 5. Désactiver boutonSupprimer tant qu'aucune ligne n'est sélectionnée
     //    (disableProperty lié à selectedItemProperty().isNull() du selection model).
+
+    // Colonnes
+    colNumero.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().numeroCarre()));
+
+    colNom.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().nomConvivial()));
+
+    colProtocole.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().protocole()));
+
+    tableSites.setItems(viewModel.sitesProperty());
+
+    labelResume.textProperty().bind(viewModel.resumeProperty());
+
+    choiceProtocole.getItems().addAll(
+            "PointFixeStandard",
+            "PointFixeRecherche"
+    );
+
+    boutonSupprimer.disableProperty().bind(
+            tableSites.getSelectionModel()
+                    .selectedItemProperty()
+                    .isNull()
+    );
   }
 
   @FXML
