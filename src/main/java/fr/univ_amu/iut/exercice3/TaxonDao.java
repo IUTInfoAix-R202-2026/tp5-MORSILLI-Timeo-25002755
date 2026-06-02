@@ -1,8 +1,8 @@
 package fr.univ_amu.iut.exercice3;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import fr.univ_amu.iut.jdbc.DataAccessException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,8 +38,19 @@ public class TaxonDao {
     // - préparer puis exécuter la requête (connexion.prepareStatement(sql), ps.executeQuery()) ;
     // - pour chaque ligne, appeler depuis(rs) et l'ajouter à `taxons`.
     // - en cas de SQLException, lever une DataAccessException.
+      try {
+        Connection connection = source.getConnection();
+        PreparedStatement st = connection.prepareStatement(sql);
+        ResultSet rs = st.executeQuery();
+        while(rs.next()) {
+          Taxon t = depuis(rs);
+          taxons.add(t);
+        }
+      } catch (SQLException e) {
+          throw new DataAccessException("Zzzzzz", e);
+      }
 
-    return taxons;
+      return taxons;
   }
 
   /** Cherche un taxon par son code ; renvoie {@link Optional#empty()} si absent. */
@@ -52,6 +63,19 @@ public class TaxonDao {
     // - préparer la requête, puis lier le paramètre `?` au code (méthode setString) ;
     // - exécuter ; si le ResultSet contient une ligne, construire le Taxon avec depuis(rs)
     //   et l'envelopper dans un Optional ; sinon, laisser `resultat` vide.
+    try {
+      Connection connection = source.getConnection();
+      PreparedStatement pt = connection.prepareStatement(sql);
+      pt.setString(1, code);
+      ResultSet rs = pt.executeQuery();
+      while(rs.next()) {
+        Taxon t = depuis(rs);
+        resultat = Optional.of(t);
+      }
+    } catch (SQLException e) {
+      throw new DataAccessException("Zzzzzz", e);
+    }
+
 
     return resultat;
   }
