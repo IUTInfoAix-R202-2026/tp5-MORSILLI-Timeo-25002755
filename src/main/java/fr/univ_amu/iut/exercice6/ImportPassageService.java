@@ -1,10 +1,8 @@
 package fr.univ_amu.iut.exercice6;
 
 import fr.univ_amu.iut.jdbc.DataAccessException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -64,8 +62,43 @@ public class ImportPassageService {
     // 4. finally : refermer la connexion.
     //
     // Astuce : ouvrez la connexion AVANT le try afin de pouvoir faire rollback dans le catch.
+    Connection connection = null;
 
-    return passageId;
+    try {
+      connection = source.getConnection();
+      connection.setAutoCommit(false);
+      PreparedStatement pt = connection.prepareStatement(sqlPassage, Statement.RETURN_GENERATED_KEYS);
+      pt.setString(1, numeroCarre);
+      pt.setString(2, codePoint);
+      pt.setInt(3, numeroPassage);
+      pt.setInt(4, annee);
+      pt.executeUpdate();
+      passageId = pt.getGeneratedKeys().getLong(1);
+
+      pt = connection.prepareStatement(sqlObservation);
+
+      pt.setLong(1, passageId);
+
+      for(ObservationAImporter element : observations) {
+        pt.setDouble(2, element.tempsDebut());
+        pt.setDouble(3, element.tempsFin());
+        pt.setInt(4, element.frequenceMediane());
+        pt.setString(5, element.codeTaxon());
+        pt.setDouble(6, element.probabilite());
+
+        pt.executeUpdate();
+      }
+
+
+      connection.commit();
+      } catch (SQLException e) {
+          annulerSilencieusement(connection);
+        throw new DataAccessException("Zzzz", e);
+      } finally {
+        fermerSilencieusement(connection);
+      }
+
+      return passageId;
   }
 
   /** Nombre de passages en base (fourni, utile pour vérifier qu'un rollback a bien tout annulé). */
